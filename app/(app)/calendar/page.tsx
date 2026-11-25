@@ -101,7 +101,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
             const inMonth = d.startsWith(month);
             const isToday = d === now;
             return (
-              <div key={d} className={`group relative min-h-32 border-line p-1.5 ${i % 7 !== 6 ? "border-r" : ""} ${i < days.length - 7 ? "border-b" : ""} ${inMonth ? "" : "bg-ground/70"}`}>
+              <div key={d} className={`group relative min-h-32 min-w-0 overflow-hidden border-line p-1.5 ${i % 7 !== 6 ? "border-r" : ""} ${i < days.length - 7 ? "border-b" : ""} ${inMonth ? "" : "bg-ground/70"}`}>
                 <div className="mb-1 flex items-center justify-between px-1">
                   <span className={`tabular grid size-6 place-items-center rounded-full text-xs font-bold ${isToday ? "bg-accent text-deep" : inMonth ? "text-fg" : "text-fg-dim"}`}>{Number(d.slice(8))}</span>
                   {isAdmin && (
@@ -110,13 +110,13 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                     </Link>
                   )}
                 </div>
-                <ul className="grid gap-1">
+                <ul className="grid min-w-0 gap-1">
                   {items.slice(0, MAX_PER_DAY).map((r) => (
                     <li key={r.id}>
                       <Link
                         href={`/content/${r.id}`}
                         title={`${r.title}${isAdmin ? ` · ${r.business_name}` : ""}`}
-                        className={`flex items-center gap-1.5 rounded-md px-1.5 py-1 text-xs transition hover:bg-sunk ${r.status === "published" ? "text-fg-muted" : ""}`}
+                        className={`flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-xs transition hover:bg-sunk ${r.status === "published" ? "text-fg-muted" : ""}`}
                       >
                         <span className={`size-2 shrink-0 rounded-full ${STATUS_DOT[r.status]}`} />
                         <span className="truncate font-semibold">{r.title}</span>

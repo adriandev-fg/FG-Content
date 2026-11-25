@@ -194,12 +194,20 @@ export function ContentEditor({ item, comments, businessName }: { item: ContentI
               <label htmlFor="title" className="sr-only">
                 {t.editor.titleLabel}
               </label>
-              <input
+              {/* A textarea that grows with the title, so a long one wraps instead of being cut off. */}
+              <textarea
                 id="title"
+                rows={1}
                 value={draft.title}
-                onChange={(e) => patch({ title: e.target.value })}
+                ref={(el) => {
+                  if (!el) return;
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                }}
+                onChange={(e) => patch({ title: e.target.value.replace(/\n/g, " ") })}
+                onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                 maxLength={300}
-                className="w-full bg-transparent font-display text-[1.625rem] leading-tight font-[800] tracking-[-0.02em] outline-none placeholder:text-fg-dim sm:text-[2rem]"
+                className="block w-full resize-none overflow-hidden bg-transparent font-display text-[1.625rem] leading-tight font-[800] tracking-[-0.02em] outline-none placeholder:text-fg-dim sm:text-[2rem]"
               />
             </div>
             <Toolbar editor={editor} />
@@ -292,7 +300,7 @@ export function ContentEditor({ item, comments, businessName }: { item: ContentI
 function Details({ draft, patch }: { draft: Draft; patch: (p: Partial<Draft>) => void }) {
   const { t } = useI18n();
   return (
-    <fieldset className={`${card} grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-[auto_auto_1fr]`}>
+    <fieldset className={`${card} grid gap-x-6 gap-y-4 p-5 sm:grid-cols-[auto_minmax(0,1fr)]`}>
       <legend className="sr-only">{t.editor.details}</legend>
       <div className="grid gap-1.5">
         <span className={label}>{t.newContent.format}</span>
@@ -317,7 +325,7 @@ function Details({ draft, patch }: { draft: Draft; patch: (p: Partial<Draft>) =>
           })}
         </div>
       </div>
-      <div className="grid grid-cols-[minmax(0,1fr)_7rem] gap-2 sm:col-span-2 xl:col-span-1">
+      <div className="grid grid-cols-[minmax(0,11rem)_8rem] gap-3 sm:col-span-2">
         <label className="grid gap-1.5">
           <span className={label}>{t.newContent.date}</span>
           <input type="date" value={draft.publishOn} onChange={(e) => patch({ publishOn: e.target.value })} className={input} />
