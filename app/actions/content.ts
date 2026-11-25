@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { actionViewer, displayName, type Viewer } from "@/lib/auth";
 import { buildAnchor, MAX_QUOTE } from "@/lib/content/anchor";
-import { templateDoc, templateText } from "@/lib/content/extensions";
+import { templateDoc, templateText } from "@/lib/content/template";
 import { canClientSet, clientCanAct, statusAfterSave, statusFields } from "@/lib/content/status";
 import { cleanUrl, isFormat, isPlatform, isStatus, type ContentItem, type ContentLink, type Format, type Platform, type Status } from "@/lib/content/types";
 import { isIsoDay, isTime } from "@/lib/dates";
@@ -61,6 +61,16 @@ export async function createContent(_: CreateState, form: FormData): Promise<Cre
   if (platforms.length === 0) return { error: t.newContent.errors.platforms };
   if (!isFormat(format)) return { error: t.common.error };
 
+  // Links to graphics and materials: rows of label + url; empty rows are skipped, a bad url is an error.
+  const labels = form.getAll("link_label").map(String);
+  const links: ContentLink[] = [];
+  for (const [i, raw] of form.getAll("link_url").map(String).slice(0, 20).entries()) {
+    if (!raw.trim()) continue;
+    const url = cleanUrl(raw);
+    if (!url) return { error: t.newContent.errors.link };
+    links.push({ label: (labels[i] ?? "").trim().slice(0, 120), url });
+  }
+
   const rows = useTemplate ? t.templates[format] : [];
   const { data, error } = await db()
     .from("fgc_content")
@@ -73,6 +83,7 @@ export async function createContent(_: CreateState, form: FormData): Promise<Cre
       body_text: useTemplate ? templateText(rows) : "",
       publish_on: isIsoDay(publishOn) ? publishOn : null,
       publish_time: isIsoDay(publishOn) && isTime(publishTime) ? publishTime : null,
+      links,
       created_by: viewer.id,
     })
     .select("id")

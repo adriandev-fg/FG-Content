@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { createContent } from "@/app/actions/content";
+import { Icon } from "@/app/_ui/icons";
 import { btn, card, Field, FormError, input, label } from "@/app/_ui/ui";
 import { FORMATS, PLATFORMS, type Format } from "@/lib/content/types";
 import { fill } from "@/lib/i18n/config";
@@ -53,6 +54,7 @@ export function NewContentForm({ businesses, businessId, date }: { businesses: {
           <input id="publish_time" name="publish_time" type="time" disabled={!day} className={input} />
         </Field>
       </div>
+      <LinkRows />
       <label className="flex items-start gap-3 rounded-lg bg-sunk p-3 text-sm">
         <input type="checkbox" name="template" defaultChecked className="mt-0.5 size-4 accent-[var(--color-accent-ink)]" />
         <span>
@@ -65,5 +67,43 @@ export function NewContentForm({ businesses, businessId, date }: { businesses: {
         {pending ? t.common.creating : t.newContent.submit}
       </button>
     </form>
+  );
+}
+
+/** Links to graphics and materials. Rows post as link_label[] / link_url[]; empty rows are skipped. */
+function LinkRows() {
+  const { t } = useI18n();
+  const [rows, setRows] = useState([0]);
+  const [next, setNext] = useState(1);
+  return (
+    <fieldset className="grid gap-2">
+      <legend className={label}>
+        {t.editor.links} ({t.common.optional})
+      </legend>
+      <p className="-mt-1 text-[13px] text-fg-dim">{t.editor.linksHint}</p>
+      {rows.map((id) => (
+        <div key={id} className="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_auto]">
+          <input name="link_label" aria-label={t.editor.linkLabel} placeholder={t.editor.linkLabelPlaceholder} maxLength={120} className={input} />
+          <input name="link_url" type="url" inputMode="url" aria-label={t.editor.linkUrl} placeholder="https://drive.google.com/..." className={input} />
+          {rows.length > 1 ? (
+            <button type="button" className={btn.ghost} onClick={() => setRows((r) => r.filter((x) => x !== id))}>
+              {t.editor.removeLink}
+            </button>
+          ) : (
+            <span className="hidden sm:block" />
+          )}
+        </div>
+      ))}
+      <button
+        type="button"
+        className={`${btn.outline} justify-self-start`}
+        onClick={() => {
+          setRows((r) => [...r, next]);
+          setNext((n) => n + 1);
+        }}
+      >
+        <Icon name="plus" size={16} /> {t.editor.addLink}
+      </button>
+    </fieldset>
   );
 }

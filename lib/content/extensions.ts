@@ -53,18 +53,3 @@ export const editorExtensions = (opts: { editable: boolean }) => [
   }),
   CommentHighlights,
 ];
-
-/** A starting document for a format, from the copy's template (["h", "Hook"], ["p", ""], ...). */
-export function templateDoc(rows: string[][]): Record<string, unknown> {
-  return {
-    type: "doc",
-    content: rows.map(([kind, text]) =>
-      kind === "h"
-        ? { type: "heading", attrs: { level: 3 }, content: text ? [{ type: "text", text }] : [] }
-        : { type: "paragraph", content: text ? [{ type: "text", text }] : [] },
-    ),
-  };
-}
-
-/** Plain text of a template, the same way docText reads it (blocks joined by a newline). */
-export const templateText = (rows: string[][]) => rows.map(([, text]) => text).join("\n");

@@ -135,6 +135,7 @@ export const en = {
       title: "Give it a title.",
       business: "Pick a business.",
       platforms: "Pick at least one platform.",
+      link: "One of the links doesn't look right. Start it with https://",
     },
   },
   editor: {

@@ -133,6 +133,7 @@ export const pl: Dict = {
       title: "Dodaj tytuł.",
       business: "Wybierz firmę.",
       platforms: "Wybierz co najmniej jedną platformę.",
+      link: "Jeden z linków wygląda niepoprawnie. Zacznij go od https://",
     },
   },
   editor: {
